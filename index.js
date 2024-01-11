@@ -38,7 +38,7 @@ app.get('/schedule', (req, res) => {
 
     // Generate 10 random hobby slots
     let hobbySlots = generateTimeSlots('8:00 AM', '8:00 PM', 15, 10);
-    hobbySlots = _.sampleSize(hobbySlots, 15);
+    hobbySlots = _.sampleSize(hobbySlots, 60);
 
     // Schedule tasks
     let schedule = scheduleTasks(workSlots, hobbySlots);
@@ -51,6 +51,5 @@ app.get('/schedule', (req, res) => {
 
     res.json(scheduleForShortcuts);
 });
-
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
