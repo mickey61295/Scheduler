@@ -46,8 +46,8 @@ app.get('/schedule', (req, res) => {
 
     // Create an array of events for the ics file
     let events = schedule.map(slot => ({
-        start: slot.start.format('YYYYMDTHmsZ'),
-        end: slot.end.format('YYYYMDTHmsZ'),
+        start: slot.start.format('YYYYMDTHHmmssZ'),
+        end: slot.end.format('YYYYMDTHHmmssZ'),
         title: 'Scheduled Slot',
         description: 'This is a scheduled slot.',
         startOutputType: 'local',
