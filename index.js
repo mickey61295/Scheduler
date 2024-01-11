@@ -45,19 +45,27 @@ app.get('/schedule', (req, res) => {
     let schedule = scheduleTasks(workSlots, hobbySlots);
 
     // Create an array of events for the ics file
-    let events = schedule.map(slot => ({
-        start: slot.start.format('YYYYMDTHHmmssZ'),
-        end: slot.end.format('YYYYMDTHHmmssZ'),
-        title: 'Scheduled Slot',
-        description: 'This is a scheduled slot.',
-        startOutputType: 'local',
-        endOutputType: 'local',
-        alarms: [{
-            action: 'display',
-            trigger: { minutes: 2, before: true },
-            description: 'Reminder'
-        }]
-    }));
+    let workSlotCounter = 1;
+    let hobbySlotCounter = 1;
+    let events = schedule.map(slot => {
+        let title;
+        if (workSlots.includes(slot)) {
+            title = `Work Slot ${workSlotCounter++}`;
+        } else {
+            title = `Hobby Slot ${hobbySlotCounter++}`;
+        }
+        return {
+            start: slot.start.tz('Asia/Kolkata').format('YYYYMMDDTHHmmss'),
+            end: slot.end.tz('Asia/Kolkata').format('YYYYMMDDTHHmmss'),
+            title: title,
+            description: 'This is a scheduled slot.',
+            alarms: [{
+                action: 'display',
+                trigger: { minutes: 2, before: true },
+                description: 'Reminder'
+            }]
+        };
+    });
 
     // Generate the ics data
     ics.createEvents(events, (error, value) => {
