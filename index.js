@@ -45,9 +45,10 @@ app.get('/schedule', (req, res) => {
 
     // Convert schedule to array of strings
     let scheduleForShortcuts = schedule.map(slot => ({
-        start: slot.start.format('YYYY-MM-DD HH:mm:ss'),
-        end: slot.end.format('YYYY-MM-DD HH:mm:ss')
+        start: slot.start.format('MMM D, YYYY [at] h:mm A'),
+        end: slot.end.format('MMM D, YYYY [at] h:mm A')
     }));
+    
 
     res.json(scheduleForShortcuts);
 });
