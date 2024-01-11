@@ -51,7 +51,12 @@ app.get('/schedule', (req, res) => {
         title: 'Scheduled Slot',
         description: 'This is a scheduled slot.',
         startOutputType: 'local',
-        endOutputType: 'local'
+        endOutputType: 'local',
+        alarms: [{
+            action: 'display',
+            trigger: { minutes: 2, before: true },
+            description: 'Reminder'
+        }]
     }));
 
     // Generate the ics data
