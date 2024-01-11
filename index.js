@@ -65,7 +65,7 @@ app.get('/schedule', (req, res) => {
         // Set the correct headers and send the ics data as a response
         res.set({
             'Content-Type': 'text/calendar',
-            'Content-Disposition': 'attachment; filename=schedule.ics'
+            'Content-Disposition': 'inline; filename=schedule.ics'
         });
         res.send(value);
     });
