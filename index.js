@@ -2,6 +2,7 @@ const express = require('express');
 const moment = require('moment');
 const momentTz = require('moment-timezone');
 const _ = require('lodash');
+const ics = require('ics');
 require('dotenv').config();
 
 const app = express();
@@ -43,14 +44,31 @@ app.get('/schedule', (req, res) => {
     // Schedule tasks
     let schedule = scheduleTasks(workSlots, hobbySlots);
 
-    // Convert schedule to array of strings
-    let scheduleForShortcuts = schedule.map(slot => ({
-        start: slot.start.format('MMM D, YYYY [at] h:mm A'),
-        end: slot.end.format('MMM D, YYYY [at] h:mm A')
+    // Create an array of events for the ics file
+    let events = schedule.map(slot => ({
+        start: slot.start.format('YYYYMDTHmsZ'),
+        end: slot.end.format('YYYYMDTHmsZ'),
+        title: 'Scheduled Slot',
+        description: 'This is a scheduled slot.',
+        startOutputType: 'local',
+        endOutputType: 'local'
     }));
-    
 
-    res.json(scheduleForShortcuts);
+    // Generate the ics data
+    ics.createEvents(events, (error, value) => {
+        if (error) {
+            console.log(error);
+            res.status(500).send('Error generating ics file.');
+            return;
+        }
+
+        // Set the correct headers and send the ics data as a response
+        res.set({
+            'Content-Type': 'text/calendar',
+            'Content-Disposition': 'attachment; filename=schedule.ics'
+        });
+        res.send(value);
+    });
 });
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
