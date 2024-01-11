@@ -3,6 +3,7 @@ const moment = require('moment');
 const momentTz = require('moment-timezone');
 const _ = require('lodash');
 const ics = require('ics');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
@@ -75,12 +76,39 @@ app.get('/schedule', (req, res) => {
             return;
         }
 
-        // Set the correct headers and send the ics data as a response
-        res.set({
-            'Content-Type': 'text/calendar',
-            'Content-Disposition': 'inline; filename=schedule.ics'
+        // Create a transporter object using the default SMTP transport
+        let transporter = nodemailer.createTransport({
+            service: 'gmail',  // use 'gmail' for Gmail
+            auth: {
+                user: process.env.senderMail,  // your email
+                pass: process.env.senderPass  // your email password
+            }
         });
-        res.send(value);
+
+        // Email options
+        let mailOptions = {
+            from: process.env.senderMail,  // sender address
+            to: process.env.receiverMail,  // list of receivers
+            subject: `${momentTz.tz('Asia/Kolkata').format('YYYY-MM-DD')} Schedule`,  // Subject line
+            text: 'Here is your schedule.',  // plain text body
+            attachments: [
+                {
+                    filename: momentTz.tz('Asia/Kolkata').format('YYYY-MM-DD') + '.ics',
+                    content: value
+                }
+            ]
+        };
+
+        // Send email
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+                res.status(500).send('Error sending email.');
+                return;
+            }
+            console.log('Email sent: ' + info.response);
+            res.send('Email sent');
+        });
     });
 });
 
