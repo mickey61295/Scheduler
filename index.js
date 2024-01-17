@@ -61,8 +61,8 @@ app.post('/schedule', (req, res) => {
             hobbyCounter++;
         }
         return {
-            start: slot.start.tz('Asia/Kolkata').format('YYYYMMDDTHHmmss'),
-            end: slot.end.tz('Asia/Kolkata').format('YYYYMMDDTHHmmss'),
+            start: slot.start.format('YYYYMMDDTHHmmss'),
+            end: slot.end.format('YYYYMMDDTHHmmss'),
             title: title,
             description: 'This is a scheduled slot.',
             alarms: [{
