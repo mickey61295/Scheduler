@@ -34,7 +34,7 @@ function scheduleTasks(workSlots, hobbySlots) {
     return schedule;
 }
 
-app.get('/schedule', (req, res) => {
+app.post('/schedule', (req, res) => {
     // Generate 15 random work slots
     let hobbies = req.body.hobbies;
     let hobbyCounter = 0;
