@@ -7,6 +7,7 @@ const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
+app.use(express.json());
 const port = process.env.PORT;
 function generateTimeSlots(startTime, endTime, chunkDuration, breakDuration = 0) {
     const ist = 'Asia/Kolkata';
@@ -35,10 +36,14 @@ function scheduleTasks(workSlots, hobbySlots) {
 
 app.get('/schedule', (req, res) => {
     // Generate 15 random work slots
+    let hobbies = req.body.hobbies;
+    let hobbyCounter = 0;
+
+    // Generate 15 random work slots
     let workSlots = generateTimeSlots('10:00 AM', '7:00 PM', 20, 10);
     workSlots = _.sampleSize(workSlots, 15);
 
-    // Generate 10 random hobby slots
+    // Generate 15 random hobby slots
     let hobbySlots = generateTimeSlots('8:00 AM', '8:00 PM', 15, 10);
     hobbySlots = _.sampleSize(hobbySlots, 60);
 
@@ -47,13 +52,13 @@ app.get('/schedule', (req, res) => {
 
     // Create an array of events for the ics file
     let workSlotCounter = 1;
-    let hobbySlotCounter = 1;
     let events = schedule.map(slot => {
         let title;
         if (workSlots.includes(slot)) {
             title = `Work Slot ${workSlotCounter++}`;
         } else {
-            title = `Hobby Slot ${hobbySlotCounter++}`;
+            title = `${hobbies[hobbyCounter % hobbies.length]} Slot`;
+            hobbyCounter++;
         }
         return {
             start: slot.start.tz('Asia/Kolkata').format('YYYYMMDDTHHmmss'),
