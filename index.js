@@ -10,10 +10,10 @@ const app = express();
 app.use(express.json());
 const port = process.env.PORT;
 function generateTimeSlots(startTime, endTime, chunkDuration, breakDuration = 0) {
-    //const ist = 'Asia/Kolkata';
-    const today = momentTz.tz(moment()).startOf('day');
-    const start = momentTz.tz(moment(startTime, 'hh:mm A'));
-    const end = momentTz.tz(moment(endTime, 'hh:mm A'));
+    const ist = 'UTC';
+    const today = momentTz.tz(moment(), ist).startOf('day');
+    const start = momentTz.tz(moment(startTime, 'hh:mm A'), ist);
+    const end = momentTz.tz(moment(endTime, 'hh:mm A'), ist);
     let slots = [];
     while (start.add(chunkDuration, 'minutes').isSameOrBefore(end)) {
         slots.push({start: start.clone(), end: start.clone().add(chunkDuration, 'minutes')});
